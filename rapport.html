@@ -5,444 +5,458 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IA-Score RH — Rapport</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: #1a1a2e; color: #0f1117; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
 
-  .gen-screen { text-align: center; color: white; }
-  .gen-logo { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 0.1em; color: white; margin-bottom: 32px; }
-  .gen-logo span { color: #c8522a; }
-  .gen-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 12px; }
-  .gen-sub { font-size: 15px; color: rgba(255,255,255,0.6); margin-bottom: 40px; }
-  .gen-spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #c8522a; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .gen-status { font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic; }
+/* ===== ECRAN (vue navigateur) ===== */
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #e8e4da;
+  color: #0f1117;
+  margin: 0;
+  padding: 32px 16px;
+}
 
-  /* ===== RAPPORT PDF ===== */
-  #rapport-pdf {
-    position: fixed;
-    left: -9999px;
-    top: 0;
-    width: 794px;
-    background: white;
-    font-family: 'DM Sans', sans-serif;
-    color: #0f1117;
-    visibility: hidden;
+.page-wrap {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.18);
+}
+
+/* Bouton impression (masqué à l'impression) */
+.print-bar {
+  background: #0f1117;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.print-bar-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: white;
+}
+
+.print-bar-logo span { color: #c8522a; }
+
+.btn-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #c8522a;
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-print:hover { background: #a8401c; }
+
+/* ===== PAGE 1 : COUVERTURE ===== */
+.cover-page {
+  background: #0f1117;
+  padding: 0;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cover-top-bar {
+  height: 5px;
+  background: linear-gradient(90deg, #c8522a 0%, #1a3a4a 100%);
+}
+
+.cover-inner {
+  padding: 48px 56px 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cover-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 16px;
+}
+
+.cover-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: white;
+  margin-bottom: 32px;
+}
+
+.cover-title-accent { color: #c8522a; font-style: italic; }
+
+.cover-prospect-box {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 24px;
+  margin-bottom: 40px;
+  display: inline-block;
+}
+
+.cover-prospect-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 8px;
+}
+
+.cover-prospect-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 3px;
+}
+
+.cover-prospect-meta {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+}
+
+.cover-score-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+  margin-top: auto;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.cover-score-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1;
+  color: white;
+}
+
+.cover-score-denom {
+  font-size: 18px;
+  color: rgba(255,255,255,0.35);
+  padding-bottom: 10px;
+}
+
+.cover-score-text { flex: 1; }
+
+.cover-niveau {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #c8522a;
+  margin-bottom: 6px;
+}
+
+.cover-verdict {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.cover-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+}
+
+.cover-footer {
+  padding: 14px 56px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  justify-content: space-between;
+}
+
+.cover-footer span {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ===== PAGE 2 : DIMENSIONS ===== */
+.dims-page {
+  background: #f5f2eb;
+  padding: 48px 56px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #0f1117;
+}
+
+.page-section-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.page-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #0f1117;
+}
+
+.page-logo span { color: #c8522a; }
+
+.section-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #0f1117;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #0f1117;
+  display: inline-block;
+}
+
+.dim-bar-row { margin-bottom: 16px; }
+
+.dim-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5px;
+}
+
+.dim-bar-name { font-size: 13px; font-weight: 500; color: #0f1117; }
+
+.dim-bar-score {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dim-bar-track {
+  height: 8px;
+  background: #e8e4da;
+  width: 100%;
+}
+
+.dim-bar-fill { height: 8px; }
+
+.legend-box {
+  margin-top: 28px;
+  padding: 16px 20px;
+  background: #0f1117;
+  color: rgba(255,255,255,0.65);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.legend-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c8522a;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ===== PAGE 3 : RECOMMANDATIONS ===== */
+.recos-page {
+  background: white;
+  padding: 48px 56px;
+}
+
+.reco-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.reco-card {
+  padding: 18px;
+  border: 1.5px solid #e8e4da;
+  background: #f5f2eb;
+}
+
+.reco-priority {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.reco-priority.high { color: #c8522a; }
+.reco-priority.medium { color: #d4942a; }
+.reco-priority.low { color: #2a7a4a; }
+
+.reco-dim {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 7px;
+  color: #0f1117;
+}
+
+.reco-text {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.recos-note {
+  margin-top: 24px;
+  font-size: 11px;
+  color: #9ca3af;
+  font-style: italic;
+  line-height: 1.6;
+  border-top: 1px solid #e8e4da;
+  padding-top: 16px;
+}
+
+/* ===== PAGE 4 : CLÔTURE ===== */
+.cta-page {
+  background: #0f1117;
+  padding: 56px;
+}
+
+.cta-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 18px;
+}
+
+.cta-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 38px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.cta-title span { color: #c8522a; }
+
+.cta-body {
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  max-width: 440px;
+  margin-bottom: 40px;
+}
+
+.cta-divider {
+  width: 40px;
+  height: 3px;
+  background: #c8522a;
+  margin-bottom: 32px;
+}
+
+.cta-contacts { display: flex; flex-direction: column; gap: 10px; }
+
+.cta-contact-row { display: flex; align-items: center; gap: 16px; }
+
+.cta-contact-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  width: 72px;
+}
+
+.cta-contact-value { font-size: 14px; color: white; font-weight: 400; }
+.cta-contact-value.accent { color: #c8522a; }
+
+/* ===== MEDIA PRINT ===== */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
   }
 
-  .pdf-page {
-    width: 794px;
-    min-height: 297mm;
+  body {
+    background: white;
     padding: 0;
-    position: relative;
-    page-break-after: always;
-    overflow: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  /* PAGE 1 : COUVERTURE */
-  .cover-page {
-    background: #0f1117;
-    display: flex;
-    flex-direction: column;
+  .print-bar { display: none !important; }
+
+  .page-wrap {
+    max-width: 100%;
+    box-shadow: none;
   }
 
-  .cover-top-bar {
-    height: 6px;
-    background: linear-gradient(90deg, #c8522a, #1a3a4a);
-    width: 100%;
-  }
-
-  .cover-body {
-    padding: 48px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .cover-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    color: white;
-    margin-bottom: 60px;
-  }
-
-  .cover-logo span { color: #c8522a; }
-
-  .cover-tag {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 20px;
-  }
-
-  .cover-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 52px;
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-    color: white;
-    margin-bottom: 8px;
-  }
-
-  .cover-title-accent {
-    color: #c8522a;
-    font-style: italic;
-  }
-
-  .cover-divider {
-    width: 48px;
-    height: 3px;
-    background: #c8522a;
-    margin: 32px 0;
-  }
-
-  .cover-prospect-block {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 24px 28px;
-    margin-bottom: 32px;
-    max-width: 380px;
-  }
-
-  .cover-prospect-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 12px;
-  }
-
-  .cover-prospect-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 4px;
-  }
-
-  .cover-prospect-meta {
-    font-size: 13px;
-    color: rgba(255,255,255,0.5);
-  }
-
-  .cover-score-block {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    margin-top: auto;
-    padding-top: 40px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .cover-score-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 80px;
-    font-weight: 800;
-    line-height: 1;
-    color: white;
-  }
-
-  .cover-score-denom {
-    font-size: 20px;
-    color: rgba(255,255,255,0.4);
-    align-self: flex-end;
-    padding-bottom: 12px;
-  }
-
-  .cover-score-right {
-    flex: 1;
-  }
-
-  .cover-niveau {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #c8522a;
-    margin-bottom: 8px;
-  }
-
-  .cover-verdict {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    line-height: 1.2;
-    margin-bottom: 12px;
-  }
-
-  .cover-desc {
-    font-size: 12px;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.6;
-  }
-
-  .cover-footer {
-    padding: 20px 48px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .cover-footer-left {
-    font-size: 11px;
-    color: rgba(255,255,255,0.3);
-  }
-
-  .cover-footer-right {
-    font-size: 11px;
-    color: rgba(255,255,255,0.3);
-  }
-
-  /* PAGE 2 : RESULTATS */
-  .results-page {
-    background: #f5f2eb;
-    padding: 48px;
-  }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #0f1117;
-  }
-
-  .page-section-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #6b7280;
-  }
-
-  .page-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: #0f1117;
-  }
-
-  .page-logo span { color: #c8522a; }
-
-  .section-heading {
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #0f1117;
-    margin-bottom: 20px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #0f1117;
-    display: inline-block;
-  }
-
-  .dim-bars-block { margin-bottom: 40px; }
-
-  .dim-bar-row {
-    margin-bottom: 14px;
-  }
-
-  .dim-bar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 5px;
-  }
-
-  .dim-bar-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: #0f1117;
-  }
-
-  .dim-bar-score {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-  }
-
-  .dim-bar-track {
-    height: 7px;
-    background: #e8e4da;
-    width: 100%;
-  }
-
-  .dim-bar-fill {
-    height: 7px;
-  }
-
-  /* PAGE 3 : RECOMMANDATIONS */
-  .reco-page {
-    background: white;
-    padding: 48px;
-  }
-
-  .reco-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
-  }
-
-  .reco-card {
-    padding: 20px;
-    border: 1.5px solid #e8e4da;
-    background: #f5f2eb;
-  }
-
-  .reco-priority {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .reco-priority.high { color: #c8522a; }
-  .reco-priority.medium { color: #d4942a; }
-  .reco-priority.low { color: #2a7a4a; }
-
-  .reco-dim {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #0f1117;
-  }
-
-  .reco-text {
-    font-size: 12px;
-    color: #6b7280;
-    line-height: 1.6;
-  }
-
-  /* PAGE 4 : CLOTURE */
-  .cta-page {
-    background: #0f1117;
-    display: flex;
-    flex-direction: column;
-    padding: 64px 48px;
-    justify-content: center;
-  }
-
-  .cta-eyebrow {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    margin-bottom: 20px;
-  }
-
-  .cta-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 40px;
-    font-weight: 800;
-    color: white;
-    line-height: 1.1;
-    margin-bottom: 24px;
-  }
-
-  .cta-title span { color: #c8522a; }
-
-  .cta-body {
-    font-size: 14px;
-    color: rgba(255,255,255,0.6);
-    line-height: 1.7;
-    max-width: 420px;
-    margin-bottom: 48px;
-  }
-
-  .cta-contact-block {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .cta-contact-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .cta-contact-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    width: 80px;
-  }
-
-  .cta-contact-value {
-    font-size: 14px;
-    color: white;
-    font-weight: 500;
-  }
-
-  .cta-contact-value.accent { color: #c8522a; }
-
-  .cta-divider {
-    width: 48px;
-    height: 3px;
-    background: #c8522a;
-    margin: 40px 0;
-  }
-
-  .cta-footer-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    color: rgba(255,255,255,0.2);
-    margin-top: auto;
-  }
+  .cover-page { page-break-after: always; }
+  .dims-page  { page-break-after: always; }
+  .recos-page { page-break-after: always; }
+  .cta-page   { page-break-after: auto; }
+}
 </style>
 </head>
 <body>
 
-<!-- ÉCRAN DE GÉNÉRATION -->
-<div class="gen-screen" id="gen-screen">
-  <div class="gen-logo">ETIK<span>.</span></div>
-  <div class="gen-spinner"></div>
-  <h1 class="gen-title">Génération du rapport</h1>
-  <p class="gen-sub">Votre rapport IA-Score RH est en cours de création...</p>
-  <p class="gen-status" id="gen-status">Chargement des données...</p>
-</div>
+<div class="page-wrap" id="page-wrap">
 
-<!-- RAPPORT (invisible, utilisé pour le PDF) -->
-<div id="rapport-pdf">
+  <!-- BARRE IMPRESSION -->
+  <div class="print-bar">
+    <span class="print-bar-logo">ETIK<span>.</span> IA-Score RH</span>
+    <button class="btn-print" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+      Télécharger le rapport PDF
+    </button>
+  </div>
 
   <!-- PAGE 1 : COUVERTURE -->
-  <div class="pdf-page cover-page">
+  <div class="cover-page">
     <div class="cover-top-bar"></div>
-    <div class="cover-body">
-      <div class="cover-logo">ETIK<span>.</span></div>
-      <div class="cover-tag">Diagnostic de maturité IA</div>
+    <div class="cover-inner">
+      <div class="cover-tag">Diagnostic de maturité IA &mdash; Etik Conseil &amp; Formation</div>
       <div class="cover-title">IA-Score<br><span class="cover-title-accent">RH</span></div>
-      <div class="cover-divider"></div>
-      <div class="cover-prospect-block">
+      <div class="cover-prospect-box">
         <div class="cover-prospect-label">Rapport établi pour</div>
         <div class="cover-prospect-name" id="pdf-nom">—</div>
         <div class="cover-prospect-meta" id="pdf-meta">—</div>
       </div>
-      <div class="cover-score-block">
+      <div class="cover-score-row">
         <div class="cover-score-num" id="pdf-score">—</div>
         <div class="cover-score-denom">/100</div>
-        <div class="cover-score-right">
+        <div class="cover-score-text">
           <div class="cover-niveau" id="pdf-niveau">—</div>
           <div class="cover-verdict" id="pdf-verdict">—</div>
           <div class="cover-desc" id="pdf-desc">—</div>
@@ -450,44 +464,43 @@
       </div>
     </div>
     <div class="cover-footer">
-      <div class="cover-footer-left" id="pdf-date">—</div>
-      <div class="cover-footer-right">samibenmansour.com</div>
+      <span id="pdf-date">—</span>
+      <span>samibenmansour.com</span>
     </div>
   </div>
 
-  <!-- PAGE 2 : RESULTATS PAR DIMENSION -->
-  <div class="pdf-page results-page">
+  <!-- PAGE 2 : DIMENSIONS -->
+  <div class="dims-page">
     <div class="page-header">
       <span class="page-section-label">Résultats par dimension</span>
       <span class="page-logo">ETIK<span>.</span></span>
     </div>
     <div class="section-heading">Votre profil de maturité IA</div>
-    <div class="dim-bars-block" id="pdf-dim-bars"></div>
-    <div style="margin-top:32px; padding:20px; background:#0f1117; color:rgba(255,255,255,0.7); font-size:12px; line-height:1.7;">
-      <span style="font-family:'Syne',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#c8522a; display:block; margin-bottom:10px;">Lecture des résultats</span>
+    <div id="pdf-dim-bars"></div>
+    <div class="legend-box">
+      <span class="legend-label">Lecture des résultats</span>
       Les dimensions avec un score inférieur à 35/100 représentent vos priorités immédiates de formation. Entre 35 et 65, un renforcement est recommandé. Au-delà de 65, les pratiques sont en place et peuvent être optimisées.
     </div>
   </div>
 
   <!-- PAGE 3 : RECOMMANDATIONS -->
-  <div class="pdf-page reco-page">
+  <div class="recos-page">
     <div class="page-header">
       <span class="page-section-label">Recommandations de formation</span>
       <span class="page-logo">ETIK<span>.</span></span>
     </div>
     <div class="section-heading">Vos priorités d'action</div>
     <div class="reco-grid" id="pdf-recos"></div>
-    <div style="margin-top:28px; font-size:12px; color:#6b7280; font-style:italic; line-height:1.6; border-top:1px solid #e8e4da; padding-top:20px;">
-      Ces recommandations sont établies sur la base de vos réponses au diagnostic IA-Score RH. Elles constituent un point de départ pour définir votre plan de formation. Un échange personnalisé permettra d'affiner les priorités selon votre contexte spécifique.
-    </div>
+    <div class="recos-note">Ces recommandations sont établies sur la base de vos réponses au diagnostic IA-Score RH. Elles constituent un point de départ pour définir votre plan de formation. Un échange personnalisé permettra d'affiner les priorités selon votre contexte spécifique.</div>
   </div>
 
   <!-- PAGE 4 : CLÔTURE -->
-  <div class="pdf-page cta-page">
+  <div class="cta-page">
     <div class="cta-eyebrow">Prochaine étape</div>
     <h2 class="cta-title">Passons à<br>l'action <span>ensemble.</span></h2>
     <p class="cta-body">Ce diagnostic est le point de départ. Pour concevoir un dispositif de formation IA adapté à votre organisation, à vos équipes et à vos enjeux métiers, échangeons directement.</p>
-    <div class="cta-contact-block">
+    <div class="cta-divider"></div>
+    <div class="cta-contacts">
       <div class="cta-contact-row">
         <span class="cta-contact-label">Consultant</span>
         <span class="cta-contact-value">Sami Ben Mansour</span>
@@ -505,8 +518,6 @@
         <span class="cta-contact-value">samibenmansour.com</span>
       </div>
     </div>
-    <div class="cta-divider"></div>
-    <div class="cta-footer-logo">ETIK.</div>
   </div>
 
 </div>
@@ -522,7 +533,7 @@ var DIMENSIONS = [
 ];
 
 var LEVELS = [
-  { min: 0,  max: 24,  label: 'Niveau 1 — Découverte',    verdict: 'Terrain vierge, potentiel immense',       desc: 'Votre organisation n\'a pas encore engagé de démarche structurée avec l\'IA. C\'est le moment idéal pour poser les bases : sensibilisation, culture et premières expérimentations ciblées.' },
+  { min: 0,  max: 24,  label: 'Niveau 1 — Découverte',    verdict: 'Terrain vierge, potentiel immense',        desc: 'Votre organisation n\'a pas encore engagé de démarche structurée avec l\'IA. C\'est le moment idéal pour poser les bases : sensibilisation, culture et premières expérimentations ciblées.' },
   { min: 25, max: 49,  label: 'Niveau 2 — Initiation',    verdict: 'Premières actions, cohérence à construire', desc: 'Quelques initiatives isolées existent mais ne forment pas encore un ensemble cohérent. L\'enjeu est de structurer une vision partagée et de former les acteurs clés.' },
   { min: 50, max: 69,  label: 'Niveau 3 — Progression',   verdict: 'Maturité partielle, accélération possible',  desc: 'Votre organisation a engagé des pratiques IA sur plusieurs dimensions. Il faut maintenant capitaliser sur les acquis, combler les lacunes et embarquer l\'ensemble des fonctions.' },
   { min: 70, max: 84,  label: 'Niveau 4 — Consolidation', verdict: 'Pratiques établies, excellence à portée',    desc: 'La maturité IA est réelle. Les pratiques sont intégrées à plusieurs niveaux. L\'objectif est désormais l\'optimisation, la gouvernance et le passage à l\'échelle.' },
@@ -545,35 +556,21 @@ function getLevel(score) {
   return LEVELS[0];
 }
 
-function setStatus(msg) {
-  document.getElementById('gen-status').textContent = msg;
-}
+var params = new URLSearchParams(window.location.search);
+var prenom     = params.get('prenom')     || '';
+var nom        = params.get('nom')        || '';
+var entreprise = params.get('entreprise') || '';
+var fonction   = params.get('fonction')   || '';
+var score      = parseInt(params.get('score') || '0');
+var niveau     = params.get('niveau')     || '';
+var dims = [];
+for (var d = 0; d < 6; d++) { dims.push(parseInt(params.get('d' + d) || '0')); }
 
-window.onload = function() {
-  var params = new URLSearchParams(window.location.search);
-
-  var prenom    = params.get('prenom')    || '';
-  var nom       = params.get('nom')       || '';
-  var entreprise = params.get('entreprise') || '';
-  var fonction  = params.get('fonction')  || '';
-  var score     = parseInt(params.get('score') || '0');
-  var niveau    = params.get('niveau')    || '';
-
-  var dims = [];
-  for (var d = 0; d < 6; d++) {
-    dims.push(parseInt(params.get('d' + d) || '0'));
-  }
-
-  if (!prenom && !nom) {
-    setStatus('Lien invalide ou données manquantes.');
-    return;
-  }
-
-  setStatus('Construction du rapport pour ' + prenom + ' ' + nom + '...');
-
+if (!prenom && !nom) {
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;color:#6b7280;">Lien invalide ou expiré.</div>';
+} else {
   var level = getLevel(score);
 
-  // Remplir la couverture
   document.getElementById('pdf-nom').textContent = prenom + ' ' + nom;
   document.getElementById('pdf-meta').textContent = fonction + (entreprise ? ' — ' + entreprise : '');
   document.getElementById('pdf-score').textContent = score;
@@ -582,71 +579,37 @@ window.onload = function() {
   document.getElementById('pdf-desc').textContent = level.desc;
 
   var today = new Date();
-  var dateStr = today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('pdf-date').textContent = 'Rapport établi le ' + dateStr;
+  document.getElementById('pdf-date').textContent = 'Rapport établi le ' + today.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Barres par dimension
+  // Barres dimensions
   var barsHtml = '';
   for (var i = 0; i < DIMENSIONS.length; i++) {
     var s = dims[i];
-    var barColor = s < 35 ? '#c8522a' : s < 65 ? '#d4942a' : '#2a7a4a';
+    var c = s < 35 ? '#c8522a' : s < 65 ? '#d4942a' : '#2a7a4a';
     barsHtml += '<div class="dim-bar-row">';
-    barsHtml += '<div class="dim-bar-header"><span class="dim-bar-name">' + DIMENSIONS[i].title + '</span><span class="dim-bar-score" style="color:' + barColor + '">' + s + '/100</span></div>';
-    barsHtml += '<div class="dim-bar-track"><div class="dim-bar-fill" style="width:' + s + '%;background:' + barColor + '"></div></div>';
+    barsHtml += '<div class="dim-bar-header"><span class="dim-bar-name">' + DIMENSIONS[i].title + '</span><span class="dim-bar-score" style="color:' + c + '">' + s + '/100</span></div>';
+    barsHtml += '<div class="dim-bar-track"><div class="dim-bar-fill" style="width:' + s + '%;background:' + c + '"></div></div>';
     barsHtml += '</div>';
   }
   document.getElementById('pdf-dim-bars').innerHTML = barsHtml;
 
-  // Recommandations (4 dimensions les plus faibles)
+  // Recommandations
   var dimsSorted = [];
-  for (var d2 = 0; d2 < DIMENSIONS.length; d2++) {
-    dimsSorted.push({ idx: d2, key: DIMENSIONS[d2].id, score: dims[d2] });
-  }
+  for (var d2 = 0; d2 < DIMENSIONS.length; d2++) { dimsSorted.push({ idx: d2, key: DIMENSIONS[d2].id, score: dims[d2] }); }
   dimsSorted.sort(function(a, b) { return a.score - b.score; });
 
   var recoHtml = '';
   for (var r = 0; r < 4; r++) {
     var item = dimsSorted[r];
-    var recoKey = item.score < 35 ? 'low' : item.score < 65 ? 'mid' : 'high';
-    var pLabel = r < 2 ? 'Priorité haute' : r === 2 ? 'Priorité moyenne' : 'À consolider';
-    var pClass = r < 2 ? 'high' : r === 2 ? 'medium' : 'low';
-    recoHtml += '<div class="reco-card">';
-    recoHtml += '<div class="reco-priority ' + pClass + '">' + pLabel + '</div>';
-    recoHtml += '<div class="reco-dim">' + DIMENSIONS[item.idx].title + '</div>';
-    recoHtml += '<div class="reco-text">' + RECOS[item.key][recoKey] + '</div>';
-    recoHtml += '</div>';
+    var rk = item.score < 35 ? 'low' : item.score < 65 ? 'mid' : 'high';
+    var pl = r < 2 ? 'Priorité haute' : r === 2 ? 'Priorité moyenne' : 'À consolider';
+    var pc = r < 2 ? 'high' : r === 2 ? 'medium' : 'low';
+    recoHtml += '<div class="reco-card"><div class="reco-priority ' + pc + '">' + pl + '</div><div class="reco-dim">' + DIMENSIONS[item.idx].title + '</div><div class="reco-text">' + RECOS[item.key][rk] + '</div></div>';
   }
   document.getElementById('pdf-recos').innerHTML = recoHtml;
 
-  // Générer le PDF
-  setStatus('Génération du PDF...');
-  setTimeout(function() {
-    var element = document.getElementById('rapport-pdf');
-    var nomFichier = 'IA-Score-RH-' + prenom + '-' + nom + '.pdf';
-    // Rendre visible pour html2canvas
-    element.style.visibility = 'visible';
-    element.style.left = '0';
-    element.style.top = '0';
-    element.style.zIndex = '-1';
-    var opt = {
-      margin:      0,
-      filename:    nomFichier,
-      image:       { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, allowTaint: true, backgroundColor: '#ffffff' },
-      jsPDF:       { unit: 'px', format: [794, 1123], orientation: 'portrait' },
-      pagebreak:   { mode: ['avoid-all', 'css'] }
-    };
-    html2pdf().set(opt).from(element).save().then(function() {
-      // Recacher après génération
-      element.style.visibility = 'hidden';
-      element.style.left = '-9999px';
-      setStatus('Rapport téléchargé avec succès.');
-      document.querySelector('.gen-spinner').style.display = 'none';
-      document.querySelector('.gen-title').textContent = 'Rapport généré !';
-      document.querySelector('.gen-sub').textContent = nomFichier;
-    });
-  }, 1200);
-};
+  document.title = 'IA-Score RH — ' + prenom + ' ' + nom;
+}
 </script>
 </body>
 </html>
