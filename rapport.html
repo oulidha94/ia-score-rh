@@ -21,17 +21,18 @@
 
   /* ===== RAPPORT PDF ===== */
   #rapport-pdf {
-    position: absolute;
+    position: fixed;
     left: -9999px;
     top: 0;
-    width: 210mm;
+    width: 794px;
     background: white;
     font-family: 'DM Sans', sans-serif;
     color: #0f1117;
+    visibility: hidden;
   }
 
   .pdf-page {
-    width: 210mm;
+    width: 794px;
     min-height: 297mm;
     padding: 0;
     position: relative;
@@ -622,21 +623,29 @@ window.onload = function() {
   setTimeout(function() {
     var element = document.getElementById('rapport-pdf');
     var nomFichier = 'IA-Score-RH-' + prenom + '-' + nom + '.pdf';
+    // Rendre visible pour html2canvas
+    element.style.visibility = 'visible';
+    element.style.left = '0';
+    element.style.top = '0';
+    element.style.zIndex = '-1';
     var opt = {
       margin:      0,
       filename:    nomFichier,
-      image:       { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:   { mode: ['css', 'legacy'] }
+      image:       { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, allowTaint: true, backgroundColor: '#ffffff' },
+      jsPDF:       { unit: 'px', format: [794, 1123], orientation: 'portrait' },
+      pagebreak:   { mode: ['avoid-all', 'css'] }
     };
     html2pdf().set(opt).from(element).save().then(function() {
+      // Recacher après génération
+      element.style.visibility = 'hidden';
+      element.style.left = '-9999px';
       setStatus('Rapport téléchargé avec succès.');
       document.querySelector('.gen-spinner').style.display = 'none';
       document.querySelector('.gen-title').textContent = 'Rapport généré !';
       document.querySelector('.gen-sub').textContent = nomFichier;
     });
-  }, 800);
+  }, 1200);
 };
 </script>
 </body>
