@@ -327,32 +327,45 @@ function submitForm(e) {
   var scores = computeScores();
   var level = getLevel(scores.global);
   var form = e.target;
-  var prenom = form.querySelector('[name="prenom"]').value;
-  var nom = form.querySelector('[name="nom"]').value;
+  var prenom    = form.querySelector('[name="prenom"]').value;
+  var nom       = form.querySelector('[name="nom"]').value;
   var entreprise = form.querySelector('[name="entreprise"]').value;
-  var fonction = form.querySelector('[name="fonction"]').value;
+  var fonction  = form.querySelector('[name="fonction"]').value;
+  var email     = form.querySelector('[name="email"]').value;
+  var telephone = form.querySelector('[name="telephone"]').value || '';
 
   // Construire l'URL du rapport
   var baseUrl = window.location.origin + '/rapport.html';
-  var params = new URLSearchParams();
-  params.set('prenom', prenom);
-  params.set('nom', nom);
-  params.set('entreprise', entreprise);
-  params.set('fonction', fonction);
-  params.set('score', scores.global);
-  params.set('niveau', level.label);
-  for (var d = 0; d < scores.dims.length; d++) { params.set('d' + d, scores.dims[d]); }
-  var rapportUrl = baseUrl + '?' + params.toString();
+  var urlParams = new URLSearchParams();
+  urlParams.set('prenom', prenom);
+  urlParams.set('nom', nom);
+  urlParams.set('entreprise', entreprise);
+  urlParams.set('fonction', fonction);
+  urlParams.set('score', scores.global);
+  urlParams.set('niveau', level.label);
+  for (var d = 0; d < scores.dims.length; d++) { urlParams.set('d' + d, scores.dims[d]); }
+  var rapportUrl = baseUrl + '?' + urlParams.toString();
 
-  // Remplir les champs cachés
-  document.getElementById('field-score').value = scores.global;
-  document.getElementById('field-niveau').value = level.label;
+  // Détail des scores par dimension
   var detail = '';
   for (var i = 0; i < DIMENSIONS.length; i++) { detail += DIMENSIONS[i].title + ': ' + scores.dims[i] + '/100 | '; }
-  document.getElementById('field-scores-detail').value = detail;
-  document.getElementById('field-rapport-url').value = rapportUrl;
 
-  var formData = new FormData(form);
+  // Construire le FormData manuellement pour garantir l'inclusion de tous les champs
+  var formData = new FormData();
+  formData.append('access_key', '47e816d0-6937-4854-9adc-ca350dfd5c4d');
+  formData.append('subject', 'Nouveau diagnostic IA-Score RH');
+  formData.append('from_name', 'IA-Score RH');
+  formData.append('prenom', prenom);
+  formData.append('nom', nom);
+  formData.append('email', email);
+  formData.append('entreprise', entreprise);
+  formData.append('fonction', fonction);
+  formData.append('telephone', telephone);
+  formData.append('score_global', scores.global);
+  formData.append('niveau', level.label);
+  formData.append('scores_detail', detail);
+  formData.append('lien_rapport', rapportUrl);
+
   fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
     .then(function(res) { return res.json(); })
     .then(function() { showScreen('screen-confirm'); })
